@@ -9,16 +9,13 @@ namespace Chomskiador {
         public SortedSet<Variable> Variables { get; set; }
 
         public SortedSet<Terminal> Terminals { get; set; }
-
-        public Variable Initial { get; set; }
-
+        
         public SortedSet<Production> Productions { get; set; }
 
         public Grammar() {
             Productions = new SortedSet<Production>();
             Terminals = new SortedSet<Terminal>();
             Variables = new SortedSet<Variable>();
-            Initial = new Variable('B');
         }
 
         public override String ToString() {
@@ -87,13 +84,9 @@ namespace Chomskiador {
         }
 
         public void Start() {
-            Initial = new Variable('A');
             Productions.UnionWith(Production.Parse("A->B"));
             Compile();
         }
-
-        // TERM1
-        // 
 
         public void Term1() {
             SortedSet<Production> newP = new SortedSet<Production>();
@@ -114,9 +107,6 @@ namespace Chomskiador {
             Productions.UnionWith(newP);
             Compile();
         }
-
-        // TERM2
-        // 
 
         public void Term2() {
             SortedSet<Production> terminable = new SortedSet<Production>();
@@ -148,7 +138,6 @@ namespace Chomskiador {
             Compile();
         }
 
-
         public void Bin() {
             char nextVar = NextVariable();
             SortedSet<Production> newP = new SortedSet<Production>();
@@ -169,6 +158,66 @@ namespace Chomskiador {
                 }
                 Productions.UnionWith(newP);
             } while (delP.Count + newP.Count >= 1);
+            Compile();
+        }
+        
+        public void Del() {
+            SortedSet<Variable> nullableV = new SortedSet<Variable>();
+            SortedSet<Production> nullableP = new SortedSet<Production>();
+            foreach (Production p in Productions){
+                if (Utils.IsNullable(p)) {
+                    nullableV.Add(new Variable(p.Head));
+                    nullableP.Add(p);
+                }
+            }
+            if (nullableV.Count == 0) return;
+            SortedSet<Variable> addN = new SortedSet<Variable>();
+            SortedSet<Production> newP = new SortedSet<Production>();
+            do {
+                addN.Clear();
+                newP.Clear();
+                foreach (Production p in Productions) {
+                    char[] chars = p.Body.ToCharArray();
+                    int counter = 0;
+                    foreach (char c in chars) {
+                        if (nullableV.Contains(new Variable(c))) {
+                            counter++;
+                        }
+                    }
+                    if (counter == chars.Length && !nullableV.Contains(new Variable(p.Head))) {
+                        addN.Add(new Variable(p.Head));
+                        newP.Add(new Production(p.Head, "z"));
+                        nullableP.Add(new Production(p.Head, "z"));
+                        nullableP.Add(p);
+                    }
+                }
+                nullableV.UnionWith(addN);
+                Productions.UnionWith(newP);
+            } while (addN.Count >= 1);
+            newP.Clear();
+            string pro = "";
+            foreach (Production p in Productions) {
+                SortedSet<string> binaries = Utils.Binaries(p.Body.Length);
+                char[] chars = p.Body.ToCharArray();
+                foreach (string s in binaries) {
+                    char[] binC = s.ToCharArray();
+                    for (int c = 0; c < chars.Length; c++) {
+                        if (!nullableV.Contains(new Variable(chars[c])) || (binC[c] == '1')) {
+                            pro += chars[c];
+                        }
+                    }
+                    if (pro != "") {
+                        newP.Add(new Production(p.Head, pro));
+                    }
+                    pro = "";
+                }
+            }
+            Productions.UnionWith(newP);
+            foreach (Production p in nullableP) {
+                if (Utils.IsNullable(p) && !Utils.IsInitial(p)) {
+                    Productions.Remove(p);
+                }
+            }
             Compile();
         }
 

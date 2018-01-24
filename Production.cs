@@ -5,7 +5,7 @@ namespace Chomskiador {
 
     public class Production : IComparable {
 
-        public char Head { get; set; }
+        public char Head { get; private set; }
 
         public string Body { get; set; }
 
@@ -14,25 +14,9 @@ namespace Chomskiador {
             Body = body;
         }
 
-        //public Production(char head, char body) {
-        //    Head = head;
-        //    Body = "" + body;
-        //}
-
         public override string ToString() {
             return Head + "->" + Body;
         }
-
-        public override int GetHashCode() {
-            return (Head + Body).GetHashCode();
-        }
-
-        public override bool Equals(object obj) {
-            if (obj == null) return false;
-            Production prd = obj as Production;
-            return (prd.Head + prd.Body).Equals(Head + Body);
-        }
-
 
         public static SortedSet<Production> Parse(string line) {
             String[] production = line.Split(new char[2] { '-', '>' });
@@ -48,11 +32,9 @@ namespace Chomskiador {
             if (obj == null) return 1;
             Production otherProduction = obj as Production;
             if (otherProduction != null) {
-
                 if (Body.Length == 1 && Body == otherProduction.Body && Utils.IsTerminal(Body.ToCharArray()[0])) {
                     return 0;
                 }
-
                 return (Head + Body).CompareTo(otherProduction.Head + otherProduction.Body);
             } else
                 throw new ArgumentException("El argumento no es una producción.");

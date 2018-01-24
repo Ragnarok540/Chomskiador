@@ -4,7 +4,7 @@ namespace Chomskiador {
 
     public class Terminal : IComparable {
 
-        public char Term { get; set; }
+        public char Term { get; private set; }
 
         public Terminal(char term) {
             Term = term;

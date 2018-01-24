@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
-using System.Text;
 
 namespace Chomskiador {
 
@@ -13,10 +12,20 @@ namespace Chomskiador {
         }
 
         public static bool IsTerminal(char c) {
-            return (c <= 'z') && (c >= 'a');
+            return (c <= 'y') && (c >= 'a');
         }
 
-        public static Grammar CargarArchivo(String path) {
+        public static bool IsNullable(Production p) {
+            if (p.Body == "z") return true; 
+            return false;
+        }
+
+        public static bool IsInitial(Production p) {
+            if (p.Head == 'A') return true;
+            return false;
+        }
+
+        public static Grammar LoadFile(String path) {
             Grammar gram = new Grammar();
             StreamReader sr = File.OpenText(path);
             String line = "";

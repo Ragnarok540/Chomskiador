@@ -4,7 +4,7 @@ namespace Chomskiador {
 
     public class Variable : IComparable {
 
-        public char Var { get; set; }
+        public char Var { get; private set; }
 
         public Variable(char var) {
             Var = var;

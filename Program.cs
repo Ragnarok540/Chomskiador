@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Chomskiador {
 
@@ -10,62 +6,45 @@ namespace Chomskiador {
 
         public static void Main(string[] args) {
 
-            Console.Out.WriteLine("=== Forma Normal De Chomsky ===");
-            Grammar gram = new Grammar();
-            gram.Productions.UnionWith(Production.Parse("B->C|BDC|DC"));
-            gram.Productions.UnionWith(Production.Parse("C->E|CFE"));
-            gram.Productions.UnionWith(Production.Parse("E->G|EaG"));
-            gram.Productions.UnionWith(Production.Parse("G->H|bBc|I"));
-            gram.Productions.UnionWith(Production.Parse("D->d|e"));
-            gram.Productions.UnionWith(Production.Parse("F->f|g"));
-            gram.Compile();
+            Console.WriteLine("==Forma Normal de Chomsky==");
 
-            gram.Start();
+            Grammar gr = Utils.LoadFile("gram.txt");
 
-            Console.Out.WriteLine(gram.ToString());
-            Console.Out.WriteLine("\n" + gram.ConcatTerminals());
-            Console.Out.WriteLine("\n" + gram.ConcatVariables());
+            Console.WriteLine("\nG:");
+            Console.WriteLine(gr.ToString());
 
-            gram.Term1();
+            gr.Start();
 
-            Console.Out.WriteLine(gram.ToString());
-            Console.Out.WriteLine("\n" + gram.ConcatTerminals());
-            Console.Out.WriteLine("\n" + gram.ConcatVariables());
+            Console.WriteLine("\nSTART G:");
+            Console.WriteLine(gr.ToString());
 
-            gram.Term2();
+            gr.Term1();
 
-            Console.Out.WriteLine(gram.ToString());
-            Console.Out.WriteLine("\n" + gram.ConcatTerminals());
-            Console.Out.WriteLine("\n" + gram.ConcatVariables());
+            Console.WriteLine("\nTERM1 G:");
+            Console.WriteLine(gr.ToString());
 
-            gram.Bin();
+            gr.Term2();
 
-            Console.Out.WriteLine(gram.ToString());
-            Console.Out.WriteLine("\n" + gram.ConcatTerminals());
-            Console.Out.WriteLine("\n" + gram.ConcatVariables());
+            Console.WriteLine("\nTERM2 G:");
+            Console.WriteLine(gr.ToString());
 
-            gram.Unit();
+            gr.Bin();
 
-            Console.Out.WriteLine(gram.ToString());
-            Console.Out.WriteLine("\n" + gram.ConcatTerminals());
-            Console.Out.WriteLine("\n" + gram.ConcatVariables());
+            Console.WriteLine("\nBIN G:");
+            Console.WriteLine(gr.ToString());
 
+            gr.Del();
+
+            Console.WriteLine("\nDEL G:");
+            Console.WriteLine(gr.ToString());
+
+            gr.Unit();
+
+            Console.WriteLine("\nUNIT G:");
+            Console.WriteLine(gr.ToString());
+            
             Console.ReadLine();
 
-            Console.Out.WriteLine(Utils.IsTerminal('a'));
-            Console.Out.WriteLine(Utils.IsTerminal('A'));
-            Console.Out.WriteLine(Utils.IsVariable('a'));
-            Console.Out.WriteLine(Utils.IsVariable('A'));
-
-            Test(8);
-
-            Console.ReadLine();
-
-        }
-
-        public static void Test(int num) {
-            SortedSet<String> lis = Utils.Binaries(num);
-            foreach (String s in lis) Console.Out.WriteLine(s);
         }
 
     }
