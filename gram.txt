@@ -1,0 +1,6 @@
+﻿B->C|BDC|DC
+C->E|CFE
+E->G|EaG
+G->H|bBc|I
+D->d|e
+F->f|g
