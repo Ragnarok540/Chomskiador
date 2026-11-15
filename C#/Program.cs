@@ -50,3 +50,5 @@ namespace Chomskiador {
     }
 
 }
+
+// dotnet run
